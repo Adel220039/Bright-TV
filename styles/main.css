@@ -2,23 +2,56 @@ main{
  padding: 20px;
  display: flex;
  flex-direction: column ;
-  gap: 25px;
+ gap: 25px;
 }
 
-.popular{
+.popular,.recently-viewed{
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.popular h2{
+.recently-viewed{
+  display: none;
+}
+.popular h2 ,.recently-viewed h2{
+  position: relative;
   font-family: "Ubuntu", sans-serif;
   font-weight: 400;
   font-size: 1.5rem;
   color: var(--white);
+  width: fit-content;
+}
+.popular h2::before 
+,.recently-viewed h2::before{
+  position: absolute;
+  backdrop-filter: blur(5px);
+  bottom: -16px;
+  left: 0;
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--gray);
+  margin-bottom: 10px;
+  z-index: 1;
+  border-radius: 1px;
+  animation: slidIn 0.5s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-.movie-popular-grid,.tv-popular-grid{
+@keyframes slidIn{
+  from{
+    width: 0%;
+  }
+  to{
+    width: 100%;
+  }
+}
+
+.movie-popular-grid,
+.tv-popular-grid,
+.recently-viewed-grid{
   display: flex;
   gap: 20px;
   overflow-x: auto;
@@ -77,8 +110,8 @@ main{
   display: block;
 }
 .popular-item{
-  min-width: 150px;
-  max-width: 200px;
+  min-width: 200px;
+  max-width: 300px;
   flex:1;
   transition: transform 0.3s ease-in-out;
   cursor: pointer;
@@ -95,4 +128,9 @@ main{
   padding: 8px;
   margin: 0;
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+.recently-viewed-grid .popular-item{
+  min-width: none;
+  max-width: 200px;
 }
