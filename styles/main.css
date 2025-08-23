@@ -5,7 +5,10 @@ main{
  gap: 25px;
 }
 
-.popular,.recently-viewed{
+.popular,
+.recently-viewed ,
+.movie-search ,
+.tv-search {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -14,7 +17,10 @@ main{
 .recently-viewed{
   display: none;
 }
-.popular h2 ,.recently-viewed h2{
+.popular h2 ,
+.recently-viewed h2,
+.movie-search h2 ,
+.tv-search h2 {
   position: relative;
   font-family: "Ubuntu", sans-serif;
   font-weight: 400;
@@ -23,7 +29,9 @@ main{
   width: fit-content;
 }
 .popular h2::before 
-,.recently-viewed h2::before{
+,.recently-viewed h2::before
+,.movie-search h2::before
+,.tv-search h2::before{
   position: absolute;
   backdrop-filter: blur(5px);
   bottom: -16px;
@@ -51,7 +59,9 @@ main{
 
 .movie-popular-grid,
 .tv-popular-grid,
-.recently-viewed-grid{
+.recently-viewed-grid,
+.movie-search-grid,
+.tv-search-grid{
   display: flex;
   gap: 20px;
   overflow-x: auto;
@@ -102,14 +112,16 @@ main{
   opacity: 0.7;
 }
 
-.popular-item img{
+.popular-item img,
+.search-item img{
   width: 100%;
-  height: auto;
+ height: 300px ;
   border-radius: 10px;
   object-fit: cover;
   display: block;
 }
-.popular-item{
+.popular-item,
+.search-item{
   min-width: 200px;
   max-width: 300px;
   flex:1;
@@ -119,7 +131,8 @@ main{
     transform: scale(1.05);
   }
 }
-.popular-item h3{
+.popular-item h3,
+.search-item h3{
   font-family: "Ubuntu", sans-serif;
   text-align: center;
   font-size: 14px;
@@ -130,7 +143,9 @@ main{
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-.recently-viewed-grid .popular-item{
+.recently-viewed-grid .popular-item,
+.movie-search-grid .search-item,
+.tv-search-grid .search-item{
   min-width: none;
   max-width: 200px;
 }
