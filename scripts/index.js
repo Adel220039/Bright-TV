@@ -105,8 +105,6 @@ const noImage ='https://www.freeiconspng.com/thumbs/no-image-icon/no-image-icon-
 
 // Display recently viewed items
 function displayRecentlyViewed(){
-  // Clear existing items first
-  recentlyViewedContainer.innerHTML = '';
   
   if (recentlyViewedArry.length > 0) {
     recentlyViewedContainer.parentElement.style.display = 'block';
@@ -132,6 +130,8 @@ displayRecentlyViewed()
 if(recentlyViewedContainer.parentElement){
   const clearAllBtn = document.querySelector('.clear-all');
   clearAllBtn.addEventListener('click' , ()=>{
+      // Clear existing items first
+     recentlyViewedContainer.innerHTML = '';
     recentlyViewedArry = [];
     localStorage.removeItem('recentlyViewed');    
     displayRecentlyViewed()
@@ -146,6 +146,15 @@ if(recentlyViewedContainer.parentElement){
       const searchKey = searchInput.value.trim();
       if(!searchKey) return;
       searchdisplay(searchKey);
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if(event.key ==='Enter'){
+        const searchInput = document.getElementById('search-input');
+        const searchKey = searchInput.value.trim();
+        if(!searchKey) return;
+        searchdisplay(searchKey);
+      }
     })
 
 

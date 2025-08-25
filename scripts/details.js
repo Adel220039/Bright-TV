@@ -1,3 +1,4 @@
+import { libraryItems, updateLibraryItems } from "./library.js";
 const searchParams = new URLSearchParams(window.location.search);
 const category = searchParams.get('catagory');
 const id = searchParams.get('id');
@@ -48,7 +49,10 @@ async function fetchDetails(category, id) {
       .then(respone => respone.json())
       .then(data => {
         return {
-           actors : data.Actors ,
+           actors : data.Actors.split(',').map((actor ,index) =>({
+             id: index + 1,
+             name: actor.trim()
+           })),
            director : data.Director ,
            writer : data.Writer , 
            runtimeOmd :data.Runtime,
@@ -84,8 +88,44 @@ async function fetchDetails(category, id) {
     }catch(error){
       console.error('Error fetching details:', error);
     }
-  displayDetails(data)
-  console.log(data)
+  displayDetails(data);
+
+  
+
+  if(document.body.querySelector('main')){
+    const addTolibrary = document.querySelector('.add-to-library');
+    const addBtnText = document.querySelector('.text-add');
+    
+    // Update button text based on current library state
+    const updateButtonText = () => {
+      try {
+        if (libraryItems.some(item => item && item.id === data.id)) {
+          addBtnText.innerText = "Remove from library";
+        } else {
+          addBtnText.innerText = "Add to library";
+        }
+      } catch (error) {
+        console.error('Error updating button text:', error);
+        addBtnText.innerText = "Add to library";
+      }
+    };
+    
+    // Set initial button text
+    updateButtonText();
+    
+    addTolibrary.addEventListener('click', ()=>{
+      if(addBtnText.innerText==="Add to library"){
+        addBtnText.innerText="Remove from library"
+        const newLibraryItems = [data, ...libraryItems];
+        updateLibraryItems(newLibraryItems);
+      }else{
+        addBtnText.innerText="Add to library";
+        const newLibraryItems = libraryItems.filter(item => item.id !== data.id);
+        updateLibraryItems(newLibraryItems);
+      }
+      
+    })
+  }
 
     
 
@@ -100,20 +140,28 @@ function displayDetails(data){
     data.runtime = data.episode_run_time
   }
 
-  document.body.style = `background-image : url(${'https://image.tmdb.org/t/p/original' +data.backdrop_path})`;
+  document.body.style = `background-image : linear-gradient(to right, 
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.6) 20%,
+      rgba(0, 0, 0, 0.3) 40%,
+      rgba(0, 0, 0, 0) 70%
+    ) , url(${'https://image.tmdb.org/t/p/original' +data.backdrop_path})`;
 
   document.body.innerHTML = `
     <header>
-      <a href="index.html" class="back-button">&#8592; Back to Home</a>
+      <a href="index.html" class="back-button">&#8592; Back to home</a>
     </header>
 
     <main>
       <div class="title">${data.title || data.name}</div>
 
       <div class="main-info" >
-        <div class="runtime" style="display:${!data.runtime || !data.runstimeOmd ? 'none' :'block'};">${data.runtime.length > 0 ? data.runtime +' '+ 'min' : data.runstimeOmd }</div>
+        <div class="runtime" style="display:${data.runstimeOmd ==='N/A'?
+          'none'
+          : !data.runtime || !data.runstimeOmd ? 'none' :'block'
+        };">${data.runtime.length > 0 ? data.runtime +' '+ 'min' : data.runstimeOmd }</div>
         <div class="rating">
-          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy
+          <img class="star" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy
           53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0i
           MCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjRkZENzAwIiBkPSJNOS4xNTMgNS40MDhDMT
           AuNDIgMy4xMzYgMTEuMDUzIDIgMTIgMnMxLjU4IDEuMTM2IDIuODQ3IDMuNDA4bC4z
@@ -135,9 +183,9 @@ function displayDetails(data){
               : data.imdbRating  ? data.imdbRating  : data.vote_average }</span> 
             /10 
             ${data.imdbRating === 'N/A'?
-              data.vote_average  ? '<img src="images/tmdb.svg">' : ''
+              data.vote_average  ? '<img class="tmdb-logo" src="images/tmdb.svg">' : ''
               : data.imdbRating  ? `
-                <svg class="ipc-logo" xmlns="http://www.w3.org/2000/svg" width="64" height="32" viewBox="0 0 64 32" version="1.1">
+                <svg class="imdb-logo" xmlns="http://www.w3.org/2000/svg" width="60" height="auto" viewBox="0 0 64 32" version="1.1">
                   <g fill="#F5C518">
                     <rect x="0" y="0" width="100%" height="100%" rx="4"></rect>
                   </g>
@@ -146,22 +194,26 @@ function displayDetails(data){
                     <path d="M15.6725178,0 L14.5534833,8.40846934 L13.8582008,3.83502426 C13.65661,2.37009263 13.4632474,1.09175121 13.278113,0 L7,0 L7,18 L11.2416347,18 L11.2580911,6.11380679 L13.0436094,18 L16.0633571,18 L17.7583653,5.8517865 L17.7707076,18 L22,18 L22,0 L15.6725178,0 Z"></path><path d="M24,18 L24,0 L31.8045586,0 C33.5693522,0 35,1.41994415 35,3.17660424 L35,14.8233958 C35,16.5777858 33.5716617,18 31.8045586,18 L24,18 Z M29.8322479,3.2395236 C29.6339219,3.13233348 29.2545158,3.08072342 28.7026524,3.08072342 L28.7026524,14.8914865 C29.4312846,14.8914865 29.8796736,14.7604764 30.0478195,14.4865461 C30.2159654,14.2165858 30.3021941,13.486105 30.3021941,12.2871637 L30.3021941,5.3078959 C30.3021941,4.49404499 30.272014,3.97397442 30.2159654,3.74371416 C30.1599168,3.5134539 30.0348852,3.34671372 29.8322479,3.2395236 Z"></path><path d="M44.4299079,4.50685823 L44.749518,4.50685823 C46.5447098,4.50685823 48,5.91267586 48,7.64486762 L48,14.8619906 C48,16.5950653 46.5451816,18 44.749518,18 L44.4299079,18 C43.3314617,18 42.3602746,17.4736618 41.7718697,16.6682739 L41.4838962,17.7687785 L37,17.7687785 L37,0 L41.7843263,0 L41.7843263,5.78053556 C42.4024982,5.01015739 43.3551514,4.50685823 44.4299079,4.50685823 Z M43.4055679,13.2842155 L43.4055679,9.01907814 C43.4055679,8.31433946 43.3603268,7.85185468 43.2660746,7.63896485 C43.1718224,7.42607505 42.7955881,7.2893916 42.5316822,7.2893916 C42.267776,7.2893916 41.8607934,7.40047379 41.7816216,7.58767002 L41.7816216,9.01907814 L41.7816216,13.4207851 L41.7816216,14.8074788 C41.8721037,15.0130276 42.2602358,15.1274059 42.5316822,15.1274059 C42.8031285,15.1274059 43.1982131,15.0166981 43.281155,14.8074788 C43.3640968,14.5982595 43.4055679,14.0880581 43.4055679,13.2842155 Z"></path>
                     </g>
                 </svg>
-              `  : '<img src="images/tmdb.svg">' }
+              `  : '<img class="tmdb-logo" src="images/tmdb.svg">' }
           </div>
         </div>
-        <div class="year">${data.yearTmdb ? 
-          data.yearTmdb === '-' ? data.yearOmdb : data.yearTmdb
+        <div class="year">${data.yearOmdb ? 
+          data.yearOmdb 
         :
-        data.yearOmdb
+        data.yearTmdb ==="-" ?'':data.yearTmdb
        }</div>
       </div>
 
       <div class="genres-s-e">
-        <div class="genres" style="display :${data.genres ? 'block' :'none'};"> 
-           ${data.genres.map( genre => { return `<div class="genre">${genre.name}</div>` })}
+        <div class="genres-container" style="display :${data.genres ? 'block' :'none'};"> 
+          <h3>Genres</h3>
+          <div class="genres">
+            ${data.genres.map( genre => { return `<div class="genre">${genre.name}</div>` }).join('')}
+          </div>
+           
         </div>
 
-        <div class="seasons-eps" style="display :${category==='movie' ? 'none' :'block'};">
+        <div class="seasons-eps" style="display :${category==='movie' ? 'none' :'flex'};">
           <div class="seasons">
             ${data.number_of_seasons > 1? data.number_of_seasons+' ' + 'Seasons' : data.number_of_seasons+' ' + 'Season'}
           </div>
@@ -177,7 +229,7 @@ function displayDetails(data){
         :
          'none'};">
           <h3>Cast</h3>
-          <div class="actors">${data.actors ? data.actors : ''}</div>
+          <div class="actors">${data.actors.map(actor =>{return `<div class="actor">${actor.name}</div>`}).join('')}</div>
       </div>
 
       <div class="director" style="display :${data.director ? 'block' :'none'};">
@@ -197,9 +249,16 @@ function displayDetails(data){
         <div>${data.overview}</div>
       </div>
 
-      <button>
+      <button class="add-to-library">
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48ZyBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBkPSJNMTkuNTYyIDdhMi4xMzIgMi4xMzIgMCAwIDAtMi4xLTIuNUg2LjUzOGEyLjEzMiAyLjEzMiAwIDAgMC0yLjEgMi41TTE3LjUgNC41Yy4wMjgtLjI2LjA0My0uMzg5LjA0My0uNDk2YTIgMiAwIDAgMC0xLjc4Ny0xLjk5M0MxNS42NSAyIDE1LjUyIDIgMTUuMjYgMkg4Ljc0Yy0uMjYgMC0uMzkxIDAtLjQ5Ny4wMTFhMiAyIDAgMCAwLTEuNzg3IDEuOTkzYzAgLjEwNy4wMTQuMjM3LjA0My40OTYiLz48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIGQ9Ik0xNSAxOEg5Ii8+PHBhdGggZD0iTTIuMzg0IDEzLjc5M2MtLjQ0Ny0zLjE2NC0uNjctNC43NDUuMjc4LTUuNzdDMy42MSA3IDUuMjk4IDcgOC42NzIgN2g2LjY1NmMzLjM3NCAwIDUuMDYyIDAgNi4wMSAxLjAyNHMuNzI0IDIuNjA1LjI3OCA1Ljc2OWwtLjQyMiAzYy0uMzUgMi40OC0uNTI1IDMuNzIxLTEuNDIyIDQuNDY0cy0yLjIyLjc0My00Ljg2Ny43NDNoLTUuODFjLTIuNjQ2IDAtMy45NyAwLTQuODY3LS43NDNzLTEuMDcyLTEuOTgzLTEuNDIyLTQuNDY0eiIvPjwvZz48L3N2Zz4="> 
-        Add to library
+        <div class="text-add">${(() => {
+          try {
+            return libraryItems.some(item => item && item.id === data.id) ? 'Remove from library' : 'Add to library';
+          } catch (error) {
+            console.error('Error checking library items:', error);
+            return 'Add to library';
+          }
+        })()}</div>
       </button>
     </main>
   `;

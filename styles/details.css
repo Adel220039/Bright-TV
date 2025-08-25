@@ -1,7 +1,194 @@
 body{
-  backdrop-filter: blur(0px);
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
   background-size: cover;
+  position: relative;
+  padding-top: 40px;
+  color: white;
+}
+
+header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  margin: 10px;
+  background-color: transparent;
+  z-index: 10;
+}
+
+.back-button{
+  color: white;
+  font-size: 16px;
+  font-family: "Ubuntu", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border : none ;
+  text-align: center;
+  padding:3px 8px;
+  border-radius: 5px ;
+  &:hover{
+    background-color: rgba(255, 255, 255 , 0.3);
+  }
+}
+
+/* Main styles*/
+
+main{
+  backdrop-filter: blur(3px);
+  margin-left:20px ;
+  background-color: rgba(255, 255, 255 , 0.06);
+  border-radius: 50px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column ;
+  max-width: 900px;
+  gap: 20px;
+}
+
+.title{
+  text-align: center;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 35px;
+}
+
+.main-info{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  text-align: center;
+}
+
+.runtime ,.year{
+  font-size: 29px;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.rating{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:5px;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+.star{
+  width: 30px;
+}
+
+.rating-number{
+  color:rgba(255, 255, 255 , 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 29px;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.rating-number span{
+  font-size: 32px;
+  color:rgba(255, 255, 255 , 1);
+}
+
+.imdb-logo,.tmdb-logo{
+  margin-left: 10px;
+}
+
+.tmdb-logo{
+  display: block;
+  width: 120px;
+}
+
+h3 ,.director, .writer{
+  font-family: "Roboto" ,'sans serif';
+  font-size: 22px;
+  font-weight: 300;
+}
+
+.genres-s-e{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: 20px;
+}
+
+.genres-container ,
+.cast,
+.director ,
+ .writer,
+ .summary{
+  display: flex;
+  background-color: rgba(255, 255, 255 , 0.06);
+  border-radius: 10px;
+  padding: 20px;
+}
+.genres,.actors{
+  display: flex;
+  padding: 7px 10px ;
+  gap: 10px;
+  font-size: 18px;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.genre,
+.actor,
+.director span ,
+.writer span , 
+.summary div ,
+.add-to-library{
+  padding: 5px 8px;
+  background-color: rgba(255, 255, 255 , 0.06);
+  border-radius: 10px;
+  font-size: 18px;
+  font-family: "Ubuntu", sans-serif;
+  transition: all 0.3s ease-in-out ;
+  &:hover{
+   opacity: 0.8;
+  }
+}
+.summary div{
+  font-size: 14;
+  background-color: transparent;
+  font-weight: 200;
+  line-height: 1.5;
+  text-align: justify;
+}
+.seasons-eps{
+  background-color: rgba(255, 255, 255 , 0.06);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 18px;
+  font-family: "Ubuntu", sans-serif;  
+  flex-direction: column;
+  justify-content: space-evenly;
+
+}
+
+.seasons,.eps{
+  padding: 5px 8px;
+  background-color: rgba(255, 255, 255 , 0.06);
+  border-radius: 10px;
+}
+
+.add-to-library{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: white;
+  border:none;
+  width: 50%;
+  margin-left: 235px ;
+  padding: 8px 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  &:hover{
+    border: 1px solid white;
+    transform: translateY(2px);
+  }
+  &:active{
+    border: 1px solid var(--gray);
+    transform: translateY(3px);
+  }
 }
